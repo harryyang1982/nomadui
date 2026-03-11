@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "npm install --prefix app",
     "dev": "npm run dev --prefix app",
     "build": "npm run build --prefix app",
     "start": "npm run start --prefix app",
