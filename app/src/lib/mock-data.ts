@@ -16,6 +16,10 @@ export interface City {
   weather_emoji: string;
   aqi: number;
   rank: number;
+  budget: "100만원 이하" | "100~200만원" | "200만원 이상";
+  area: "수도권" | "경상도" | "전라도" | "강원도" | "제주도" | "충청도";
+  environment: string[];
+  best_season: string[];
 }
 
 export interface Review {
@@ -74,6 +78,10 @@ export const cities: City[] = [
     weather_emoji: "☀️",
     aqi: 72,
     rank: 1,
+    budget: "200만원 이상",
+    area: "수도권",
+    environment: ["도심선호", "카페작업", "코워킹 필수"],
+    best_season: ["봄", "가을"],
   },
   {
     id: "2",
@@ -93,6 +101,10 @@ export const cities: City[] = [
     weather_emoji: "☀️",
     aqi: 45,
     rank: 2,
+    budget: "100~200만원",
+    area: "경상도",
+    environment: ["카페작업", "자연친화"],
+    best_season: ["봄", "가을"],
   },
   {
     id: "3",
@@ -112,6 +124,10 @@ export const cities: City[] = [
     weather_emoji: "🌧",
     aqi: 32,
     rank: 3,
+    budget: "100~200만원",
+    area: "제주도",
+    environment: ["자연친화", "카페작업"],
+    best_season: ["봄", "가을"],
   },
   {
     id: "4",
@@ -131,6 +147,10 @@ export const cities: City[] = [
     weather_emoji: "☀️",
     aqi: 58,
     rank: 4,
+    budget: "100~200만원",
+    area: "충청도",
+    environment: ["도심선호", "코워킹 필수"],
+    best_season: ["봄", "가을"],
   },
   {
     id: "5",
@@ -150,6 +170,10 @@ export const cities: City[] = [
     weather_emoji: "🌤",
     aqi: 28,
     rank: 5,
+    budget: "100만원 이하",
+    area: "강원도",
+    environment: ["자연친화", "카페작업"],
+    best_season: ["여름", "가을"],
   },
   {
     id: "6",
@@ -169,6 +193,10 @@ export const cities: City[] = [
     weather_emoji: "☀️",
     aqi: 42,
     rank: 6,
+    budget: "100만원 이하",
+    area: "전라도",
+    environment: ["자연친화", "카페작업"],
+    best_season: ["봄", "가을"],
   },
   {
     id: "7",
@@ -188,6 +216,10 @@ export const cities: City[] = [
     weather_emoji: "☀️",
     aqi: 65,
     rank: 7,
+    budget: "100~200만원",
+    area: "수도권",
+    environment: ["도심선호", "코워킹 필수"],
+    best_season: ["봄", "가을"],
   },
   {
     id: "8",
@@ -207,6 +239,10 @@ export const cities: City[] = [
     weather_emoji: "🌤",
     aqi: 35,
     rank: 8,
+    budget: "100만원 이하",
+    area: "전라도",
+    environment: ["자연친화"],
+    best_season: ["봄", "여름"],
   },
   {
     id: "9",
@@ -226,6 +262,10 @@ export const cities: City[] = [
     weather_emoji: "☀️",
     aqi: 68,
     rank: 9,
+    budget: "100만원 이하",
+    area: "경상도",
+    environment: ["도심선호", "카페작업"],
+    best_season: ["봄", "가을"],
   },
   {
     id: "10",
@@ -245,6 +285,10 @@ export const cities: City[] = [
     weather_emoji: "🌤",
     aqi: 25,
     rank: 10,
+    budget: "100만원 이하",
+    area: "강원도",
+    environment: ["자연친화"],
+    best_season: ["여름", "가을"],
   },
   {
     id: "11",
@@ -264,6 +308,10 @@ export const cities: City[] = [
     weather_emoji: "☀️",
     aqi: 38,
     rank: 11,
+    budget: "100만원 이하",
+    area: "경상도",
+    environment: ["자연친화"],
+    best_season: ["봄", "가을"],
   },
   {
     id: "12",
@@ -283,6 +331,10 @@ export const cities: City[] = [
     weather_emoji: "🌤",
     aqi: 22,
     rank: 12,
+    budget: "100만원 이하",
+    area: "강원도",
+    environment: ["자연친화"],
+    best_season: ["여름"],
   },
 ];
 

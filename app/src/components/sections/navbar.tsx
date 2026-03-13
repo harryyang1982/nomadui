@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -11,48 +11,23 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         {/* Logo */}
-        <div className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <span className="text-xl">🇰🇷</span>
           <span className="text-xl font-bold tracking-tight">KoNomad</span>
-        </div>
+        </Link>
 
-        {/* Desktop Menu */}
-        <div className="hidden items-center gap-6 lg:flex">
-          <a href="#" className="text-sm font-medium text-foreground hover:text-coral">
-            홈
-          </a>
-          <a href="#" className="text-sm font-medium text-muted-foreground hover:text-coral">
-            도시목록
-          </a>
-          <a href="#" className="text-sm font-medium text-muted-foreground hover:text-coral">
-            지도
-          </a>
-          <a href="#" className="text-sm font-medium text-muted-foreground hover:text-coral">
-            밋업
-          </a>
-          <a href="#" className="text-sm font-medium text-muted-foreground hover:text-coral">
-            채팅
-          </a>
-        </div>
-
-        {/* Search + Auth */}
+        {/* Auth */}
         <div className="hidden items-center gap-3 lg:flex">
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="도시 검색..."
-              className="h-9 w-48 pl-8 text-sm"
-            />
-            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground">
-              🔍
-            </span>
-          </div>
-          <Button variant="ghost" size="sm">
-            로그인
-          </Button>
-          <Button size="sm" className="bg-coral text-white hover:bg-coral/90">
-            회원가입 →
-          </Button>
+          <Link href="/login">
+            <Button variant="ghost" size="sm">
+              로그인
+            </Button>
+          </Link>
+          <Link href="/register">
+            <Button size="sm" className="bg-coral text-white hover:bg-coral/90">
+              회원가입 →
+            </Button>
+          </Link>
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -80,15 +55,13 @@ export function Navbar() {
       {mobileMenuOpen && (
         <div className="border-t px-4 pb-4 lg:hidden">
           <div className="flex flex-col gap-3 pt-3">
-            <a href="#" className="text-sm font-medium">홈</a>
-            <a href="#" className="text-sm text-muted-foreground">도시목록</a>
-            <a href="#" className="text-sm text-muted-foreground">지도</a>
-            <a href="#" className="text-sm text-muted-foreground">밋업</a>
-            <a href="#" className="text-sm text-muted-foreground">채팅</a>
-            <Input type="text" placeholder="도시 검색..." className="mt-2" />
             <div className="flex gap-2">
-              <Button variant="ghost" size="sm" className="flex-1">로그인</Button>
-              <Button size="sm" className="flex-1 bg-coral text-white hover:bg-coral/90">회원가입</Button>
+              <Link href="/login" className="flex-1">
+                <Button variant="ghost" size="sm" className="w-full">로그인</Button>
+              </Link>
+              <Link href="/register" className="flex-1">
+                <Button size="sm" className="w-full bg-coral text-white hover:bg-coral/90">회원가입</Button>
+              </Link>
             </div>
           </div>
         </div>

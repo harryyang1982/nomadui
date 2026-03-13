@@ -1,11 +1,46 @@
+"use client";
+
+import { useState } from "react";
 import type { City } from "@/lib/mock-data";
 
 export function CityCard({ city }: { city: City }) {
   const costFormatted = `₩${city.monthly_cost.toLocaleString()}`;
+  const [vote, setVote] = useState<"none" | "like" | "dislike">("none");
+  const [likeCount, setLikeCount] = useState(city.like_count);
+  const [dislikeCount, setDislikeCount] = useState(city.dislike_count);
+
+  function handleLike(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (vote === "none") {
+      setLikeCount((c) => c + 1);
+      setVote("like");
+    } else if (vote === "like") {
+      setLikeCount((c) => c - 1);
+      setVote("none");
+    } else {
+      setDislikeCount((c) => c - 1);
+      setLikeCount((c) => c + 1);
+      setVote("like");
+    }
+  }
+
+  function handleDislike(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (vote === "none") {
+      setDislikeCount((c) => c + 1);
+      setVote("dislike");
+    } else if (vote === "dislike") {
+      setDislikeCount((c) => c - 1);
+      setVote("none");
+    } else {
+      setLikeCount((c) => c - 1);
+      setDislikeCount((c) => c + 1);
+      setVote("dislike");
+    }
+  }
 
   return (
-    <a
-      href="#"
+    <div
       className="group block overflow-hidden rounded-xl border bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
     >
       {/* Image Area */}
@@ -55,19 +90,36 @@ export function CityCard({ city }: { city: City }) {
       </div>
 
       {/* Bottom Info */}
-      <div className="px-4 py-3">
-        <div className="flex items-center justify-between text-sm">
-          <span>
-            ⭐ {city.nomad_score.toFixed(1)}{" "}
-            <span className="text-muted-foreground">
-              리뷰 {city.review_count}개
-            </span>
-          </span>
-          <span className="text-muted-foreground">
-            👍 {city.like_count} 👎 {city.dislike_count}
-          </span>
+      <div className="px-4 py-3 space-y-2">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+          <div><span className="text-muted-foreground">예산</span> <span>{city.budget}</span></div>
+          <div><span className="text-muted-foreground">지역</span> <span>{city.area}</span></div>
+          <div><span className="text-muted-foreground">환경</span> <span>{city.environment.join(", ")}</span></div>
+          <div><span className="text-muted-foreground">계절</span> <span>{city.best_season.join(", ")}</span></div>
+        </div>
+        <div className="flex items-center justify-end gap-2 text-sm">
+          <button
+            onClick={handleLike}
+            className={`cursor-pointer rounded px-1.5 py-0.5 transition-colors ${
+              vote === "like"
+                ? "bg-blue-100 text-blue-600"
+                : "text-muted-foreground hover:text-blue-500"
+            }`}
+          >
+            👍 {likeCount}
+          </button>
+          <button
+            onClick={handleDislike}
+            className={`cursor-pointer rounded px-1.5 py-0.5 transition-colors ${
+              vote === "dislike"
+                ? "bg-red-100 text-red-600"
+                : "text-muted-foreground hover:text-red-500"
+            }`}
+          >
+            👎 {dislikeCount}
+          </button>
         </div>
       </div>
-    </a>
+    </div>
   );
 }

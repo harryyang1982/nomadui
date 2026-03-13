@@ -1,6 +1,5 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -8,111 +7,92 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 
-export function FilterBar() {
+export interface FilterState {
+  budget: string;
+  region: string;
+  environment: string;
+  bestSeason: string;
+}
+
+interface FilterBarProps {
+  filters: FilterState;
+  onFilterChange: (filters: FilterState) => void;
+}
+
+export function FilterBar({ filters, onFilterChange }: FilterBarProps) {
+  function handleChange(key: keyof FilterState, value: string | null) {
+    onFilterChange({ ...filters, [key]: value ?? "all" });
+  }
+
   return (
     <section className="sticky top-[57px] z-40 border-b bg-white/95 px-4 py-4 shadow-sm backdrop-blur">
-      <div className="mx-auto max-w-7xl space-y-3">
-        {/* Search Row */}
-        <div className="relative">
-          <Input
-            type="text"
-            placeholder="검색 또는 필터 입력..."
-            className="h-10 pl-9"
-          />
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-            🔍
-          </span>
-        </div>
-
-        {/* Filters Row */}
+      <div className="mx-auto max-w-7xl">
         <div className="flex flex-wrap items-center gap-2">
-          <Select>
-            <SelectTrigger className="h-8 w-[110px] text-xs">
+          <Select
+            value={filters.budget}
+            onValueChange={(v) => handleChange("budget", v)}
+          >
+            <SelectTrigger className="h-8 w-[140px] text-xs">
+              <SelectValue placeholder="예산: 전체" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">전체</SelectItem>
+              <SelectItem value="100만원 이하">100만원 이하</SelectItem>
+              <SelectItem value="100~200만원">100~200만원</SelectItem>
+              <SelectItem value="200만원 이상">200만원 이상</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={filters.region}
+            onValueChange={(v) => handleChange("region", v)}
+          >
+            <SelectTrigger className="h-8 w-[120px] text-xs">
               <SelectValue placeholder="지역: 전체" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">전체</SelectItem>
-              <SelectItem value="sudo">수도권</SelectItem>
-              <SelectItem value="yeongnam">영남</SelectItem>
-              <SelectItem value="honam">호남</SelectItem>
-              <SelectItem value="chungcheong">충청</SelectItem>
-              <SelectItem value="gangwon">강원</SelectItem>
-              <SelectItem value="jeju">제주</SelectItem>
+              <SelectItem value="수도권">수도권</SelectItem>
+              <SelectItem value="경상도">경상도</SelectItem>
+              <SelectItem value="전라도">전라도</SelectItem>
+              <SelectItem value="강원도">강원도</SelectItem>
+              <SelectItem value="제주도">제주도</SelectItem>
+              <SelectItem value="충청도">충청도</SelectItem>
             </SelectContent>
           </Select>
 
-          <Select>
+          <Select
+            value={filters.environment}
+            onValueChange={(v) => handleChange("environment", v)}
+          >
             <SelectTrigger className="h-8 w-[130px] text-xs">
-              <SelectValue placeholder="생활비: 전체" />
+              <SelectValue placeholder="환경: 전체" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">전체</SelectItem>
-              <SelectItem value="under80">80만 이하</SelectItem>
-              <SelectItem value="80-120">80~120만</SelectItem>
-              <SelectItem value="120-180">120~180만</SelectItem>
-              <SelectItem value="over180">180만 이상</SelectItem>
+              <SelectItem value="자연친화">자연친화</SelectItem>
+              <SelectItem value="도심선호">도심선호</SelectItem>
+              <SelectItem value="카페작업">카페작업</SelectItem>
+              <SelectItem value="코워킹 필수">코워킹 필수</SelectItem>
             </SelectContent>
           </Select>
 
-          <Select>
-            <SelectTrigger className="h-8 w-[110px] text-xs">
-              <SelectValue placeholder="태그: 전체" />
+          <Select
+            value={filters.bestSeason}
+            onValueChange={(v) => handleChange("bestSeason", v)}
+          >
+            <SelectTrigger className="h-8 w-[130px] text-xs">
+              <SelectValue placeholder="최고 계절: 전체" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">전체</SelectItem>
-              <SelectItem value="beach">해변</SelectItem>
-              <SelectItem value="mountain">산</SelectItem>
-              <SelectItem value="city">도심</SelectItem>
-              <SelectItem value="quiet">조용함</SelectItem>
-              <SelectItem value="cafe">카페많음</SelectItem>
-              <SelectItem value="foreigner">외국인친화</SelectItem>
+              <SelectItem value="봄">봄</SelectItem>
+              <SelectItem value="여름">여름</SelectItem>
+              <SelectItem value="가을">가을</SelectItem>
+              <SelectItem value="겨울">겨울</SelectItem>
             </SelectContent>
           </Select>
-
-          <Select>
-            <SelectTrigger className="h-8 w-[140px] text-xs">
-              <SelectValue placeholder="인터넷: 전체" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">전체</SelectItem>
-              <SelectItem value="50">50Mbps 이상</SelectItem>
-              <SelectItem value="100">100Mbps 이상</SelectItem>
-              <SelectItem value="200">200Mbps 이상</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Sort + View Row */}
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <Select>
-            <SelectTrigger className="h-8 w-[150px] text-xs">
-              <SelectValue placeholder="노마드 점수순" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="score">노마드 점수순</SelectItem>
-              <SelectItem value="cost-low">생활비 낮은순</SelectItem>
-              <SelectItem value="internet">인터넷 빠른순</SelectItem>
-              <SelectItem value="reviews">리뷰 많은순</SelectItem>
-              <SelectItem value="likes">좋아요순</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <div className="flex gap-1">
-            <Button variant="secondary" size="sm" className="h-8 text-xs">
-              ▦ 그리드
-            </Button>
-            <Button variant="ghost" size="sm" className="h-8 text-xs">
-              🗺 지도
-            </Button>
-            <Button variant="ghost" size="sm" className="h-8 text-xs hidden sm:inline-flex">
-              📊 차트
-            </Button>
-            <Button variant="ghost" size="sm" className="h-8 text-xs hidden sm:inline-flex">
-              ⚖ 비교
-            </Button>
-          </div>
         </div>
       </div>
     </section>
