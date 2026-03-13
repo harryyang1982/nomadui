@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { City } from "@/lib/mock-data";
 
 export function CityCard({ city }: { city: City }) {
@@ -40,7 +41,8 @@ export function CityCard({ city }: { city: City }) {
   }
 
   return (
-    <div
+    <Link
+      href={`/city/${city.id}`}
       className="group block overflow-hidden rounded-xl border bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
     >
       {/* Image Area */}
@@ -97,7 +99,7 @@ export function CityCard({ city }: { city: City }) {
           <div><span className="text-muted-foreground">환경</span> <span>{city.environment.join(", ")}</span></div>
           <div><span className="text-muted-foreground">계절</span> <span>{city.best_season.join(", ")}</span></div>
         </div>
-        <div className="flex items-center justify-end gap-2 text-sm">
+        <div className="flex items-center justify-center gap-1 text-sm">
           <button
             onClick={handleLike}
             className={`cursor-pointer rounded px-1.5 py-0.5 transition-colors ${
@@ -106,8 +108,10 @@ export function CityCard({ city }: { city: City }) {
                 : "text-muted-foreground hover:text-blue-500"
             }`}
           >
-            👍 {likeCount}
+            👍
           </button>
+          <span className={vote === "like" ? "text-blue-600 font-medium" : "text-muted-foreground"}>{likeCount}</span>
+          <span className={vote === "dislike" ? "text-red-600 font-medium" : "text-muted-foreground"}>{dislikeCount}</span>
           <button
             onClick={handleDislike}
             className={`cursor-pointer rounded px-1.5 py-0.5 transition-colors ${
@@ -116,10 +120,10 @@ export function CityCard({ city }: { city: City }) {
                 : "text-muted-foreground hover:text-red-500"
             }`}
           >
-            👎 {dislikeCount}
+            👎
           </button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
