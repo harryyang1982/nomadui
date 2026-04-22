@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getRecentReviews } from "@/lib/queries";
+import { formatRelative } from "@/lib/format";
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -10,17 +11,6 @@ function StarRating({ rating }: { rating: number }) {
       {rating % 1 >= 0.5 ? "⭐" : ""}
     </span>
   );
-}
-
-function formatRelative(iso: string) {
-  const diffMs = Date.now() - new Date(iso).getTime();
-  const day = 24 * 60 * 60 * 1000;
-  if (diffMs < day) return "오늘";
-  const days = Math.floor(diffMs / day);
-  if (days < 7) return `${days}일 전`;
-  const weeks = Math.floor(days / 7);
-  if (weeks < 5) return `${weeks}주 전`;
-  return `${Math.floor(days / 30)}개월 전`;
 }
 
 export async function RecentReviews() {

@@ -1,19 +1,8 @@
 import { getReviewsByCity } from "@/lib/queries";
+import { formatRelative } from "@/lib/format";
 
 interface CityDetailReviewsProps {
   cityId: string;
-}
-
-function formatRelative(iso: string) {
-  const diffMs = Date.now() - new Date(iso).getTime();
-  const day = 24 * 60 * 60 * 1000;
-  if (diffMs < day) return "오늘";
-  const days = Math.floor(diffMs / day);
-  if (days < 7) return `${days}일 전`;
-  const weeks = Math.floor(days / 7);
-  if (weeks < 5) return `${weeks}주 전`;
-  const months = Math.floor(days / 30);
-  return months < 12 ? `${months}개월 전` : `${Math.floor(days / 365)}년 전`;
 }
 
 export async function CityDetailReviews({ cityId }: CityDetailReviewsProps) {
