@@ -1,42 +1,80 @@
-"use client";
-
-import { useState } from "react";
 import { Navbar } from "@/components/sections/navbar";
 import { Hero } from "@/components/sections/hero";
-import { FilterBar, FilterState } from "@/components/sections/filter-bar";
+import { FilterBar } from "@/components/sections/filter-bar";
 import { CityGrid } from "@/components/sections/city-grid";
 import { Footer } from "@/components/sections/footer";
-import { cities, City } from "@/lib/mock-data";
+import { getCities, type CityFilters } from "@/lib/queries";
+import { createClient } from "@/utils/supabase/server";
+import type { AreaRegion, BudgetBand } from "@/lib/database.types";
 
-const DEFAULT_FILTERS: FilterState = {
-  budget: "all",
-  region: "all",
-  environment: "all",
-  bestSeason: "all",
-};
+const BUDGETS: BudgetBand[] = ["100만원 이하", "100~200만원", "200만원 이상"];
+const AREAS: AreaRegion[] = [
+  "수도권",
+  "경상도",
+  "전라도",
+  "강원도",
+  "제주도",
+  "충청도",
+];
 
-function filterCities(allCities: City[], filters: FilterState): City[] {
-  return allCities.filter((city) => {
-    if (filters.budget !== "all" && city.budget !== filters.budget) return false;
-    if (filters.region !== "all" && city.area !== filters.region) return false;
-    if (filters.environment !== "all" && !city.environment.includes(filters.environment)) return false;
-    if (filters.bestSeason !== "all" && !city.best_season.includes(filters.bestSeason)) return false;
-    return true;
-  });
+type HomeSearchParams = Promise<{
+  budget?: string;
+  region?: string;
+  environment?: string;
+  bestSeason?: string;
+}>;
+
+function parseFilters(params: Awaited<HomeSearchParams>): CityFilters {
+  const filters: CityFilters = {};
+  if (params.budget && BUDGETS.includes(params.budget as BudgetBand)) {
+    filters.budget = params.budget as BudgetBand;
+  }
+  if (params.region && AREAS.includes(params.region as AreaRegion)) {
+    filters.area = params.region as AreaRegion;
+  }
+  if (params.environment && params.environment !== "all") {
+    filters.environment = params.environment;
+  }
+  if (params.bestSeason && params.bestSeason !== "all") {
+    filters.bestSeason = params.bestSeason;
+  }
+  return filters;
 }
 
-export default function Home() {
-  const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
-  const filteredCities = filterCities(cities, filters);
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: HomeSearchParams;
+}) {
+  const params = await searchParams;
+  const filters = parseFilters(params);
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const cities = await getCities(filters);
+
+  const userVotes: Record<string, "like" | "dislike"> = {};
+  if (user) {
+    const { data: votes } = await supabase
+      .from("city_votes")
+      .select("city_id, vote")
+      .eq("user_id", user.id);
+    for (const row of votes ?? []) {
+      userVotes[row.city_id] = row.vote === 1 ? "like" : "dislike";
+    }
+  }
 
   return (
     <div className="min-h-screen">
       <Navbar />
       <Hero />
-      <FilterBar filters={filters} onFilterChange={setFilters} />
+      <FilterBar />
       <section className="px-4 py-8">
         <div className="mx-auto max-w-7xl">
-          <CityGrid cities={filteredCities} />
+          <CityGrid cities={cities} userVotes={userVotes} />
         </div>
       </section>
       <Footer />

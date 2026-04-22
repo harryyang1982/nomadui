@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Navbar } from "@/components/sections/navbar";
 import { Footer } from "@/components/sections/footer";
 import { CityDetailReviews } from "@/components/sections/city-detail-reviews";
-import { cities } from "@/lib/mock-data";
+import { getCityById } from "@/lib/queries";
 
 interface CityDetailProps {
   params: Promise<{ id: string }>;
@@ -11,29 +11,36 @@ interface CityDetailProps {
 
 export default async function CityDetailPage({ params }: CityDetailProps) {
   const { id } = await params;
-  const city = cities.find((c) => c.id === id);
+  const city = await getCityById(id);
 
   if (!city) {
     notFound();
   }
 
+  const weather = city.city_weather;
   const costFormatted = `₩${city.monthly_cost.toLocaleString()}`;
 
-  const metrics = [
+  const metrics: { label: string; value: string; icon: string }[] = [
     { label: "월 생활비", value: costFormatted, icon: "💰" },
     { label: "인터넷", value: `${city.internet_speed}Mbps`, icon: "📶" },
     { label: "안전 점수", value: `${city.safety_score}/5`, icon: "🛡️" },
-    {
-      label: "현재 날씨",
-      value: `${city.weather_emoji} ${city.current_temp}°C`,
-      icon: "🌡️",
-    },
-    {
-      label: "공기질(AQI)",
-      value: `${city.aqi}`,
-      icon: city.aqi <= 50 ? "😊" : "😷",
-    },
   ];
+
+  if (weather?.current_temp != null) {
+    metrics.push({
+      label: "현재 날씨",
+      value: `${weather.weather_emoji ?? "🌤"} ${weather.current_temp}°C`,
+      icon: "🌡️",
+    });
+  }
+
+  if (weather?.aqi != null) {
+    metrics.push({
+      label: "공기질(AQI)",
+      value: `${weather.aqi}`,
+      icon: weather.aqi <= 50 ? "😊" : "😷",
+    });
+  }
 
   return (
     <div className="min-h-screen">
@@ -50,9 +57,11 @@ export default async function CityDetailPage({ params }: CityDetailProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
         <div className="absolute inset-0 flex flex-col justify-end p-6 text-white sm:p-8">
           <div className="mx-auto w-full max-w-7xl">
-            <span className="mb-2 inline-block rounded-md bg-black/40 px-2 py-0.5 text-sm font-bold backdrop-blur-sm">
-              #{city.rank}
-            </span>
+            {city.rank != null && (
+              <span className="mb-2 inline-block rounded-md bg-black/40 px-2 py-0.5 text-sm font-bold backdrop-blur-sm">
+                #{city.rank}
+              </span>
+            )}
             <h1 className="text-3xl font-bold sm:text-4xl">
               {city.name_ko}{" "}
               <span className="text-lg font-normal text-gray-300">
@@ -152,7 +161,7 @@ export default async function CityDetailPage({ params }: CityDetailProps) {
           {/* Reviews */}
           <div>
             <h2 className="mb-4 text-lg font-bold">리뷰</h2>
-            <CityDetailReviews cityName={city.name_ko} />
+            <CityDetailReviews cityId={city.id} />
           </div>
         </div>
       </section>

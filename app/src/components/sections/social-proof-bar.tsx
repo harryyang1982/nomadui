@@ -1,4 +1,4 @@
-import { pressLogos } from "@/lib/mock-data";
+const pressLogos = ["조선일보", "한겨레", "KBS", "매일경제", "한국경제", "블로터"];
 
 export function SocialProofBar() {
   return (
