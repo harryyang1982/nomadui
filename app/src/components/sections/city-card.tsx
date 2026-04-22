@@ -27,9 +27,13 @@ export function CityCard({
   );
 
   function send(direction: VoteDirection, serverDirection: VoteDirection) {
-    startTransition(() => {
+    // Awaiting the action inside startTransition keeps the transition
+    // "pending" long enough for useOptimistic to surface the mutated state.
+    // Without the await the callback returns synchronously, the action is
+    // considered settled, and the optimistic counters never appear on screen.
+    startTransition(async () => {
       mutate(direction);
-      voteCity(city.id, serverDirection);
+      await voteCity(city.id, serverDirection);
     });
   }
 

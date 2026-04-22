@@ -13,19 +13,12 @@ import {
 import type { CityWithWeather } from "@/lib/database.types";
 import { CityCard } from "./city-card";
 
-// TODO(city-card-optimistic): `useOptimistic` only persists its optimistic
-// value while the enclosing action is in-flight. The current source wraps
-// `mutate(...)` + `voteCity(...)` in a *synchronous* `startTransition(() =>
-// {...})` callback that does NOT `return`/`await` the `voteCity(...)`
-// promise, so React treats the action as "complete" in the same tick and
-// reverts the optimistic state before any render commits with the new
-// counts. That means we cannot observe `likeCount + 1` / `dislikeCount - 1`
-// from the DOM in this test environment. When the source is updated to
-// return or await the server-action promise from inside `startTransition`
-// (or is refactored to `useActionState`), these tests should be expanded to
-// also assert the optimistic count / active-vote styling after the click.
-// For now we assert the dispatched `voteCity(...)` call — which is the
-// behavior we can verify without touching the source.
+// To observe `useOptimistic`'s mutated state the action must actually be
+// pending — once it resolves React reverts to the canonical value. Tests
+// that need to check the mid-flight count install a "hanging" promise with
+// `voteCityMock.mockReturnValueOnce(new Promise(() => {}))`; the other
+// tests keep the default `mockResolvedValue(undefined)` and assert on the
+// dispatched call.
 
 describe("<CityCard />", () => {
   beforeEach(() => {
@@ -198,6 +191,60 @@ describe("<CityCard />", () => {
     });
     expect(link?.getAttribute("href")).toBe(`/city/${seoulWithWeather.id}`);
     expect(link?.isConnected).toBe(true);
+  });
+
+  it("shows optimistic like count + active style while voteCity is pending (none → like)", async () => {
+    voteCityMock.mockReturnValueOnce(new Promise<void>(() => {}));
+    const { user } = render(
+      <CityCard city={seoulWithWeather} initialVote="none" />
+    );
+
+    const expected = String(seoulWithWeather.like_count + 1);
+    await user.click(screen.getByRole("button", { name: "👍" }));
+
+    await waitFor(() => {
+      expect(screen.getByText(expected)).toBeInTheDocument();
+    });
+    const likeBtn = screen.getByRole("button", { name: "👍" });
+    expect(likeBtn.className).toMatch(/text-blue-600/);
+  });
+
+  it("optimistically decrements the like count when toggling off (like → clear)", async () => {
+    voteCityMock.mockReturnValueOnce(new Promise<void>(() => {}));
+    const { user } = render(
+      <CityCard city={seoulWithWeather} initialVote="like" />
+    );
+
+    const expected = String(seoulWithWeather.like_count - 1);
+    await user.click(screen.getByRole("button", { name: "👍" }));
+
+    await waitFor(() => {
+      expect(screen.getByText(expected)).toBeInTheDocument();
+    });
+    const likeBtn = screen.getByRole("button", { name: "👍" });
+    expect(likeBtn.className).not.toMatch(/text-blue-600/);
+  });
+
+  it("optimistically swaps counts when switching from dislike to like", async () => {
+    voteCityMock.mockReturnValueOnce(new Promise<void>(() => {}));
+    const { user } = render(
+      <CityCard city={seoulWithWeather} initialVote="dislike" />
+    );
+
+    await user.click(screen.getByRole("button", { name: "👍" }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(String(seoulWithWeather.like_count + 1))
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(String(seoulWithWeather.dislike_count - 1))
+      ).toBeInTheDocument();
+    });
+    const likeBtn = screen.getByRole("button", { name: "👍" });
+    const dislikeBtn = screen.getByRole("button", { name: "👎" });
+    expect(likeBtn.className).toMatch(/text-blue-600/);
+    expect(dislikeBtn.className).not.toMatch(/text-red-600/);
   });
 
   it("renders the tag-like metadata: budget, area, environment (joined), and best_season (joined)", () => {
