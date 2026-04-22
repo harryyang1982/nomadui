@@ -3,49 +3,15 @@ import { Hero } from "@/components/sections/hero";
 import { FilterBar } from "@/components/sections/filter-bar";
 import { CityGrid } from "@/components/sections/city-grid";
 import { Footer } from "@/components/sections/footer";
-import { getCities, type CityFilters } from "@/lib/queries";
+import { getCities } from "@/lib/queries";
 import { createClient } from "@/utils/supabase/server";
 import { getNavbarUser } from "@/lib/current-user";
-import type { AreaRegion, BudgetBand } from "@/lib/database.types";
-
-const BUDGETS: BudgetBand[] = ["100만원 이하", "100~200만원", "200만원 이상"];
-const AREAS: AreaRegion[] = [
-  "수도권",
-  "경상도",
-  "전라도",
-  "강원도",
-  "제주도",
-  "충청도",
-];
-
-type HomeSearchParams = Promise<{
-  budget?: string;
-  region?: string;
-  environment?: string;
-  bestSeason?: string;
-}>;
-
-function parseFilters(params: Awaited<HomeSearchParams>): CityFilters {
-  const filters: CityFilters = {};
-  if (params.budget && BUDGETS.includes(params.budget as BudgetBand)) {
-    filters.budget = params.budget as BudgetBand;
-  }
-  if (params.region && AREAS.includes(params.region as AreaRegion)) {
-    filters.area = params.region as AreaRegion;
-  }
-  if (params.environment && params.environment !== "all") {
-    filters.environment = params.environment;
-  }
-  if (params.bestSeason && params.bestSeason !== "all") {
-    filters.bestSeason = params.bestSeason;
-  }
-  return filters;
-}
+import { parseFilters, type HomeSearchParams } from "@/lib/filters";
 
 export default async function Home({
   searchParams,
 }: {
-  searchParams: HomeSearchParams;
+  searchParams: Promise<HomeSearchParams>;
 }) {
   const params = await searchParams;
   const filters = parseFilters(params);

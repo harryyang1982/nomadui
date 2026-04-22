@@ -4,12 +4,7 @@ import { useOptimistic, useTransition } from "react";
 import Link from "next/link";
 import type { CityWithWeather } from "@/lib/database.types";
 import { voteCity, type VoteDirection } from "@/app/actions/city-vote";
-
-type VoteState = {
-  vote: "none" | "like" | "dislike";
-  likeCount: number;
-  dislikeCount: number;
-};
+import { voteReducer, type VoteState } from "@/lib/vote-reducer";
 
 export function CityCard({
   city,
@@ -28,33 +23,7 @@ export function CityCard({
       likeCount: city.like_count,
       dislikeCount: city.dislike_count,
     },
-    (prev, action) => {
-      const next: VoteState = { ...prev };
-      if (action === "clear") {
-        if (prev.vote === "like") next.likeCount -= 1;
-        if (prev.vote === "dislike") next.dislikeCount -= 1;
-        next.vote = "none";
-      } else if (action === "like") {
-        if (prev.vote === "like") {
-          next.likeCount -= 1;
-          next.vote = "none";
-        } else {
-          if (prev.vote === "dislike") next.dislikeCount -= 1;
-          next.likeCount += 1;
-          next.vote = "like";
-        }
-      } else if (action === "dislike") {
-        if (prev.vote === "dislike") {
-          next.dislikeCount -= 1;
-          next.vote = "none";
-        } else {
-          if (prev.vote === "like") next.likeCount -= 1;
-          next.dislikeCount += 1;
-          next.vote = "dislike";
-        }
-      }
-      return next;
-    }
+    voteReducer
   );
 
   function send(direction: VoteDirection, serverDirection: VoteDirection) {
