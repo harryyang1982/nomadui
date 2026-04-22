@@ -1,0 +1,24 @@
+# OS / editor
+.DS_Store
+*.swp
+*.swo
+
+# Env & secrets — never commit
+.env
+.env.local
+.env.*.local
+client_secret*.json
+*.apps.googleusercontent.com.json
+
+# Claude / MCP local state
+.claude/.DS_Store
+.claude/scheduled_tasks.lock
+.mcp.json
+.playwright-mcp/
+
+# Dev artifacts
+login-error-test.png
+*.log
+
+# Git worktree helper output
+worktree/

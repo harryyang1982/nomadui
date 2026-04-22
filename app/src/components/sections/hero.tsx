@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-export function Hero() {
+export function Hero({ isAuthenticated = false }: { isAuthenticated?: boolean }) {
   const avatars = ["S", "K", "L", "M", "A", "J", "Y"];
 
   return (
@@ -63,20 +63,22 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Email CTA */}
-        <div className="mx-auto max-w-md space-y-3">
-          <Input
-            type="email"
-            placeholder="이메일을 입력하세요..."
-            className="h-12 border-white/20 bg-white/10 text-center text-white placeholder:text-gray-400"
-          />
-          <Button className="h-12 w-full bg-coral text-base font-semibold text-white hover:bg-coral/90">
-            무료로 시작하기 →
-          </Button>
-          <p className="text-xs text-gray-400">
-            이미 계정이 있으시면 로그인됩니다
-          </p>
-        </div>
+        {/* Email CTA — non-authenticated only */}
+        {!isAuthenticated && (
+          <div className="mx-auto max-w-md space-y-3">
+            <Input
+              type="email"
+              placeholder="이메일을 입력하세요..."
+              className="h-12 border-white/20 bg-white/10 text-center text-white placeholder:text-gray-400"
+            />
+            <Button className="h-12 w-full bg-coral text-base font-semibold text-white hover:bg-coral/90">
+              무료로 시작하기 →
+            </Button>
+            <p className="text-xs text-gray-400">
+              이미 계정이 있으시면 로그인됩니다
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );

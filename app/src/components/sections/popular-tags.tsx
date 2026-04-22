@@ -1,5 +1,17 @@
-import { popularTags } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/badge";
+
+const popularTags = [
+  "#해변도시",
+  "#카페많음",
+  "#100만이하",
+  "#조용한",
+  "#빠른인터넷",
+  "#외국인친화",
+  "#맛집많음",
+  "#산/자연",
+  "#대중교통",
+  "#문화생활",
+];
 
 export function PopularTags() {
   return (
