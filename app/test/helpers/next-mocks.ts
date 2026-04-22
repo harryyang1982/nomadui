@@ -3,17 +3,38 @@ import { vi } from "vitest";
 /**
  * Shared next/* module stubs.
  *
- * Import and call `installNextMocks()` inside a `beforeEach` (or at the top of
- * a test file) when you need to observe/assert against redirects, path
- * revalidations, cookie jars, or header maps.
+ * Vitest hoists `vi.mock(...)` calls above ESM imports, so **importing a
+ * factory statically and passing it to `vi.mock(name, factory)` throws
+ * `Cannot access '__vi_import_0__' before initialization`**. Instead, wrap
+ * the factory in an async import inside the vi.mock callback so the helper
+ * is resolved at call time:
  *
- * Example:
- *   import { installNextMocks } from "@/../test/helpers/next-mocks";
+ *   vi.mock("next/navigation", async () => {
+ *     const { nextNavigationFactory } = await import(
+ *       "../../../test/helpers/next-mocks"
+ *     );
+ *     return nextNavigationFactory();
+ *   });
+ *   vi.mock("next/cache", async () => {
+ *     const { nextCacheFactory } = await import(
+ *       "../../../test/helpers/next-mocks"
+ *     );
+ *     return nextCacheFactory();
+ *   });
+ *   vi.mock("next/headers", async () => {
+ *     const { nextHeadersFactory } = await import(
+ *       "../../../test/helpers/next-mocks"
+ *     );
+ *     return nextHeadersFactory();
+ *   });
  *
- *   const { redirect, revalidatePath, headersMap } = installNextMocks();
- *   redirect.mockClear();
- *   ...
- *   expect(redirect).toHaveBeenCalledWith("/login?error=...");
+ * Then in your tests read/clear the shared state through `getNextMockState`
+ * and `resetNextMocks` (see below):
+ *
+ *   beforeEach(() => resetNextMocks());
+ *   expect(getNextMockState().redirect).toHaveBeenCalledWith(
+ *     "/login?error=..."
+ *   );
  */
 
 interface InstalledMocks {
