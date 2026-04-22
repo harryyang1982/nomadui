@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { signup } from "../login/actions";
+import { signup, signInWithGoogle } from "../login/actions";
 
 function RegisterForm() {
   const searchParams = useSearchParams();
@@ -66,6 +66,27 @@ function RegisterForm() {
           className="h-10 w-full bg-coral text-white hover:bg-coral/90"
         >
           가입하기
+        </Button>
+      </form>
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs">
+          <span className="bg-background px-2 text-muted-foreground">또는</span>
+        </div>
+      </div>
+
+      <form action={signInWithGoogle}>
+        <Button type="submit" variant="outline" className="h-10 w-full gap-2">
+          <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M21.35 11.1h-9.17v2.92h5.28c-.24 1.4-1.55 4.1-5.28 4.1-3.18 0-5.77-2.64-5.77-5.88 0-3.25 2.59-5.88 5.77-5.88 1.81 0 3.02.77 3.72 1.43l2.54-2.45C16.86 3.76 14.8 2.88 12.18 2.88 7.03 2.88 2.82 7.08 2.82 12.23s4.21 9.35 9.36 9.35c5.4 0 8.98-3.8 8.98-9.15 0-.62-.07-1.08-.17-1.53z"
+              fill="#4285F4"
+            />
+          </svg>
+          Google로 계속하기
         </Button>
       </form>
 

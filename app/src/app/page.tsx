@@ -5,6 +5,7 @@ import { CityGrid } from "@/components/sections/city-grid";
 import { Footer } from "@/components/sections/footer";
 import { getCities, type CityFilters } from "@/lib/queries";
 import { createClient } from "@/utils/supabase/server";
+import { getNavbarUser } from "@/lib/current-user";
 import type { AreaRegion, BudgetBand } from "@/lib/database.types";
 
 const BUDGETS: BudgetBand[] = ["100만원 이하", "100~200만원", "200만원 이상"];
@@ -54,7 +55,10 @@ export default async function Home({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const cities = await getCities(filters);
+  const [cities, navbarUser] = await Promise.all([
+    getCities(filters),
+    getNavbarUser(),
+  ]);
 
   const userVotes: Record<string, "like" | "dislike"> = {};
   if (user) {
@@ -69,8 +73,8 @@ export default async function Home({
 
   return (
     <div className="min-h-screen">
-      <Navbar />
-      <Hero />
+      <Navbar user={navbarUser} />
+      <Hero isAuthenticated={!!navbarUser} />
       <FilterBar />
       <section className="px-4 py-8">
         <div className="mx-auto max-w-7xl">

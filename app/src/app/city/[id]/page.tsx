@@ -4,6 +4,7 @@ import { Navbar } from "@/components/sections/navbar";
 import { Footer } from "@/components/sections/footer";
 import { CityDetailReviews } from "@/components/sections/city-detail-reviews";
 import { getCityById } from "@/lib/queries";
+import { getNavbarUser } from "@/lib/current-user";
 
 interface CityDetailProps {
   params: Promise<{ id: string }>;
@@ -11,7 +12,10 @@ interface CityDetailProps {
 
 export default async function CityDetailPage({ params }: CityDetailProps) {
   const { id } = await params;
-  const city = await getCityById(id);
+  const [city, navbarUser] = await Promise.all([
+    getCityById(id),
+    getNavbarUser(),
+  ]);
 
   if (!city) {
     notFound();
@@ -44,7 +48,7 @@ export default async function CityDetailPage({ params }: CityDetailProps) {
 
   return (
     <div className="min-h-screen">
-      <Navbar />
+      <Navbar user={navbarUser} />
 
       {/* Hero */}
       <section className="relative h-64 overflow-hidden bg-gradient-to-br from-gray-700 to-gray-900 sm:h-80">
